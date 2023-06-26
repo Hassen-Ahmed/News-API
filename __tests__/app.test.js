@@ -10,10 +10,9 @@ beforeEach(() => {
 
 afterAll(() => {
     return db.end();
-    // return seed(testData).then(() => db.end());
 });
 
-describe("GET /api/topics", () => {
+describe("GET /api/topicss", () => {
     test("should return 200 and array of objects which they should have slug and description properties", () => {
         return request(app)
             .get("/api/topics")
@@ -25,6 +24,16 @@ describe("GET /api/topics", () => {
                     expect(topic).toHaveProperty("slug", expect.any(String));
                     expect(topic).toHaveProperty("description", expect.any(String));
                 });
+            });
+    });
+
+    test("should return 404", () => {
+        return request(app)
+            .get("/api/wrongtopic")
+            .expect(404)
+            .then(({ body }) => {
+                const topics = body;
+                expect(topics.msg).toBe("Not found!");
             });
     });
 });
