@@ -60,6 +60,13 @@ describe("GET / POST / PUT / PATCH / DELETE ", () => {
                                 "exampleResponse",
                                 expect.any(Object)
                             );
+
+                            if (endpoint === "GET /api/topics") {
+                                console.log(endpoint);
+                                expect(descriptions[endpoint].exampleResponse.topics).toEqual([
+                                    { slug: "football", description: "Footie!" },
+                                ]);
+                            }
                         }
                     });
                 });
