@@ -130,11 +130,14 @@ describe("All requests", () => {
                     });
                 });
         });
-
         it("200: if articles contain this params  ", () => {
-            return request(app).get("/api/articles/2/comments").expect(200);
+            return request(app)
+                .get("/api/articles/2/comments")
+                .expect(200)
+                .then(({ body }) => {
+                    expect(body.comments).toEqual([]);
+                });
         });
-
         test("400: and msg of Invalid request!", () => {
             return request(app)
                 .get("/api/articles/mumboJumbo/comments")
