@@ -25,9 +25,7 @@ exports.selectAllArticles = () => {
     ORDER BY articles.created_at DESC
     ;
     `;
-    const queryValue = [];
-
-    return db.query(query, queryValue).then(({ rows }) => {
+    return db.query(query).then(({ rows }) => {
         return rows;
     });
 };

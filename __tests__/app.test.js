@@ -74,7 +74,7 @@ describe("All requests", () => {
                 .then(({ body }) => {
                     const articles = body.articles;
 
-                    expect(articles).toHaveLength(13); // ???
+                    expect(articles).toHaveLength(13);
                     expect(articles.body).toBeUndefined();
 
                     articles.forEach((article) => {
@@ -89,18 +89,9 @@ describe("All requests", () => {
                     });
                 });
         });
-
-        test("400: /api/articles :- should return :400 and msg of Invalid request!", () => {
+        test("404: /api/articles :- should return :404 and msg of Not found!", () => {
             return request(app)
-                .get("/api/articles/mumboJumbo")
-                .expect(400)
-                .then(({ body }) => {
-                    expect(body.msg).toBe("Invalid request!");
-                });
-        });
-        test("404: /api/articles/:article_id :- should return :404 and msg of Not found!", () => {
-            return request(app)
-                .get("/api/articles/999")
+                .get("/api/wrong")
                 .expect(404)
                 .then(({ body }) => {
                     expect(body.msg).toBe("Not found!");

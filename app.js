@@ -12,6 +12,10 @@ app.get("/api/articles/:article_id", getArticlesById);
 
 app.get("/api/articles", getAllArticles);
 
+app.all("*", (req, res) => {
+    res.status(404).send({ msg: "Not found!" });
+});
+
 app.use(sqlErrorHandler);
 app.use(customErrorHandler);
 app.use(internalServerErrorHandler);
