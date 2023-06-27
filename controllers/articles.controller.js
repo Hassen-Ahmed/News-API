@@ -3,6 +3,7 @@ const {
     selectAllArticles,
     selectCommentsByArticleId,
 } = require("../models/articles.model");
+const { checkArticleExist } = require("../models/check-exiting-item");
 
 exports.getArticlesById = (req, res, next) => {
     const { article_id } = req.params;
@@ -25,9 +26,15 @@ exports.getAllArticles = (req, res, next) => {
 exports.getCommentsByArticleId = (req, res, next) => {
     let { article_id } = req.params;
 
-    selectCommentsByArticleId(article_id)
+    const promises = [selectCommentsByArticleId(article_id)];
+
+    if (article_id) {
+        promises.push(checkArticleExist(article_id));
+    }
+
+    return Promise.all(promises)
         .then((comments) => {
-            res.status(200).send({ comments });
+            res.status(200).send({ comments: comments[0] });
         })
         .catch(next);
 };
