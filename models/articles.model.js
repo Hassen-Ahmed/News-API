@@ -29,3 +29,14 @@ exports.selectAllArticles = () => {
         return rows;
     });
 };
+
+exports.selectCommentsByArticleId = (article_id) => {
+    let query = `
+    SELECT * FROM comments 
+    WHERE article_id = $1
+    ORDER BY created_at ASC;
+    `;
+    return db.query(query, [article_id]).then(({ rows }) => {
+        return rows;
+    });
+};
