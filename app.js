@@ -4,7 +4,13 @@ const { sqlErrorHandler, customErrorHandler, internalServerErrorHandler } = requ
 
 const { getArticlesById, getAllArticles } = require("./controllers/articles.controller");
 
+const descriptionsData = require("./endpoints.json");
+
 const app = express();
+
+app.get("/api", (req, res) => {
+    res.status(200).send(descriptionsData);
+});
 
 app.get("/api/topics", getAllTopics);
 
