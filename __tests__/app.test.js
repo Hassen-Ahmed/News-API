@@ -130,7 +130,7 @@ describe("All requests", () => {
                     });
                 });
         });
-        it("200: if articles contain this params  ", () => {
+        it("200: if articles contain the id but not in hte comments", () => {
             return request(app)
                 .get("/api/articles/2/comments")
                 .expect(200)
@@ -138,7 +138,7 @@ describe("All requests", () => {
                     expect(body.comments).toEqual([]);
                 });
         });
-        test("400: and msg of Invalid request!", () => {
+        test("404: respond with a msg of Not Found when the article id is valid but does not exist'", () => {
             return request(app)
                 .get("/api/articles/mumboJumbo/comments")
                 .expect(400)
