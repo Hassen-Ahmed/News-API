@@ -3,6 +3,7 @@ const app = require("../app");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const testData = require("../db/data/test-data");
+const descriptionsData = require("../endpoints.json");
 
 beforeEach(() => {
     return seed(testData);
@@ -13,6 +14,16 @@ afterAll(() => {
 });
 
 describe("All requests", () => {
+    describe("GET /api", () => {
+        test("200: and return the contents of endpoint.json file", () => {
+            return request(app)
+                .get("/api")
+                .expect(200)
+                .then(({ body }) => {
+                    expect(body).toEqual(descriptionsData);
+                });
+        });
+    });
     describe("GET /api/topics", () => {
         test("200: should return 200 and array of objects which they should have slug and description properties", () => {
             return request(app)
