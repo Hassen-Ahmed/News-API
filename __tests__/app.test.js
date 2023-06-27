@@ -109,4 +109,43 @@ describe("All requests", () => {
                 });
         });
     });
+    describe("GET /api/articles/:article_id/comments", () => {
+        it("200: and with list of comment which they have article_id ", () => {
+            return request(app)
+                .get("/api/articles/9/comments")
+                .expect(200)
+                .then(({ body }) => {
+                    const comments = body.comments;
+                    expect(comments).toHaveLength(2);
+                    expect(comments).toBeSortedBy("created_at", {
+                        descending: false,
+                    });
+                    comments.forEach((comment) => {
+                        expect(comment).toHaveProperty("comment_id", expect.any(Number));
+                        expect(comment).toHaveProperty("votes", expect.any(Number));
+                        expect(comment).toHaveProperty("created_at", expect.any(String));
+                        expect(comment).toHaveProperty("author", expect.any(String));
+                        expect(comment).toHaveProperty("body", expect.any(String));
+                        expect(comment).toHaveProperty("article_id", expect.any(Number));
+                    });
+                });
+        });
+
+        test("400: and msg of Invalid request!", () => {
+            return request(app)
+                .get("/api/articles/mumboJumbo/comments")
+                .expect(400)
+                .then(({ body }) => {
+                    expect(body.msg).toBe("Invalid request!");
+                });
+        });
+        test("404:  and msg of Not found!", () => {
+            return request(app)
+                .get("/api/articles/9999/comments")
+                .expect(404)
+                .then(({ body }) => {
+                    expect(body.msg).toBe("Not found!");
+                });
+        });
+    });
 });

@@ -29,3 +29,15 @@ exports.selectAllArticles = () => {
         return rows;
     });
 };
+
+exports.selectCommentsByArticleId = (article_id) => {
+    let query = `
+    SELECT * FROM comments 
+    WHERE article_id = $1
+    ORDER BY created_at ASC;
+    `;
+    return db.query(query, [article_id]).then(({ rows }) => {
+        if (!rows.length) return Promise.reject({ status: 404, msg: "Not found!" });
+        return rows;
+    });
+};
