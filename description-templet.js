@@ -89,13 +89,6 @@ module.exports = {
             ],
         },
     },
-    "GET /api/articles/:article_id(comment_count)": {
-        description: "It will help us get counts of comments",
-        queries: [],
-        exampleResponse: {
-            comments: [[{ count: "2" }]],
-        },
-    },
     "DELETE /api/comments/:comment_id": {
         description:
             "It will delete comments from table when if comments table have comment_id equal to the params id i.e /:comment_id ",

@@ -8,8 +8,8 @@ app.get("/api", getAllDescriptions);
 
 app.get("/api/topics", getAllTopics);
 
-app.get("*", (req, res) => {
-    res.status(404).send({ msg: "Not found!" });
+app.all("*", (req, res) => {
+    res.status(404).send({ status: 400, msg: "Not found!" });
 });
 
 module.exports = app;
