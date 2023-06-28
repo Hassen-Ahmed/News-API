@@ -57,7 +57,7 @@ exports.postCommentById = (req, res, next) => {
     return Promise.all(promises)
         .then((allPromises) => {
             const comments = allPromises[0];
-            res.status(200).send({ comments });
+            res.status(201).send({ comments });
         })
         .catch(next);
 };

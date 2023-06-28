@@ -156,10 +156,10 @@ describe("All requests", () => {
         });
     });
     describe("POST /api/articles/:article_id/comments", () => {
-        test("200: should return 200 and insert/post to add new record to the comments table", () => {
+        test("201: should return 200 and insert/post to add new record to the comments table", () => {
             return request(app)
                 .post("/api/articles/9/comments")
-                .expect(200)
+                .expect(201)
                 .send({
                     user_name: "butter_bridge",
                     body: {
