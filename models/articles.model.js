@@ -1,4 +1,5 @@
 const db = require("../db/connection");
+const format = require("pg-format");
 
 exports.selectArticlesById = (article_id) => {
     let query = "SELECT * FROM articles WHERE article_id = $1";
@@ -39,4 +40,19 @@ exports.selectCommentsByArticleId = (article_id) => {
     return db.query(query, [article_id]).then(({ rows }) => {
         return rows;
     });
+};
+
+exports.insertCommentsByArticleId = (article_id, body) => {
+    const values = Object.values(body);
+    return db
+        .query(
+            format(
+                `INSERT INTO  comments 
+                ( article_id, author, votes, created_at, body )VALUES %L RETURNING * ;`,
+                [values]
+            )
+        )
+        .then(({ rows }) => {
+            return rows[0];
+        });
 };

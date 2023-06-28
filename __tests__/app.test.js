@@ -155,4 +155,106 @@ describe("All requests", () => {
                 });
         });
     });
+    describe("POST /api/articles/:article_id/comments", () => {
+        test("200: should return 200 and insert/post to add new record to the comments table", () => {
+            return request(app)
+                .post("/api/articles/9/comments")
+                .expect(200)
+                .send({
+                    user_name: "butter_bridge",
+                    body: {
+                        article_id: 9,
+                        author: "butter_bridge",
+                        votes: 20,
+                        created_at: new Date(),
+                        body: "post request will going to be ok",
+                    },
+                })
+                .then(({ body }) => {
+                    const { comments } = body;
+                    expect(comments).toHaveProperty("comment_id", expect.any(Number));
+                    expect(comments).toHaveProperty("body", expect.any(String));
+                    expect(comments).toHaveProperty("article_id", expect.any(Number));
+                    expect(comments).toHaveProperty("author", expect.any(String));
+                    expect(comments).toHaveProperty("votes", expect.any(Number));
+                    expect(comments).toHaveProperty("created_at", expect.any(String));
+                });
+        });
+        test("404 should be returned when the article_id not exist in articles table but the body is ok", () => {
+            return request(app)
+                .post("/api/articles/9999/comments")
+                .expect(404)
+                .send({
+                    user_name: "butter_bridge",
+                    body: {
+                        article_id: 9,
+                        author: "butter_bridge",
+                        votes: 20,
+                        created_at: new Date(),
+                        body: "post request will going to be ok",
+                    },
+                })
+                .then(({ body }) => {
+                    const { msg } = body;
+                    expect(msg).toBe("Not found!");
+                });
+        });
+        test("404 should be returned when user_name from request body not exits in users table", () => {
+            return request(app)
+                .post("/api/articles/9/comments")
+                .expect(404)
+                .send({
+                    user_name: "David",
+                    body: {
+                        article_id: 9,
+                        author: "butter_bridge",
+                        votes: 20,
+                        created_at: new Date(),
+                        body: "post request will going to be ok",
+                    },
+                })
+                .then(({ body }) => {
+                    const { msg } = body;
+                    expect(msg).toBe("Not found!");
+                });
+        });
+        test("400 should be returned when the property article_id of the body cause foreign key relationship problem", () => {
+            return request(app)
+                .post("/api/articles/9/comments")
+                .expect(400)
+                .send({
+                    user_name: "David",
+                    body: {
+                        article_id: 999,
+                        author: "butter_bridge",
+                        votes: 20,
+                        created_at: new Date(),
+                        body: "post request will going to be ok",
+                    },
+                })
+                .then(({ body }) => {
+                    const { msg } = body;
+                    expect(msg).toBe("Invalid request!");
+                });
+        });
+        test("400 should be returned when the property author of the body cause foreign key relationship problem", () => {
+            return request(app)
+                .post("/api/articles/9/comments")
+                .expect(400)
+                .send({
+                    user_name: "David",
+                    body: {
+                        article_id: 9,
+                        author: "unKnown",
+                        votes: 20,
+                        created_at: new Date(),
+                        body: "post request will going to be ok",
+                    },
+                })
+                .then(({ body }) => {
+                    const { msg } = body;
+                    expect(msg).toBe("Invalid request!");
+                });
+        });
+    });
 });
