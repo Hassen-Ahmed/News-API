@@ -1,9 +1,8 @@
-const { validationResult } = require("../app");
 const {
     selectArticlesById,
     selectAllArticles,
     selectCommentsByArticleId,
-    insertCommentsByArticleId,
+    updateCommentsByArticleId,
 } = require("../models/articles.model");
 const { checkArticleExist } = require("../models/check-exist-item");
 
@@ -17,7 +16,7 @@ exports.getArticlesById = (req, res, next) => {
         .catch(next);
 };
 
-exports.getAllArticles = (req, res, next) => {
+exports.getAllArticles = (_, res, next) => {
     selectAllArticles()
         .then((articles) => {
             res.status(200).send({ articles });
@@ -43,21 +42,24 @@ exports.getCommentsByArticleId = (req, res, next) => {
 
 exports.postCommentById = (req, res, next) => {
     const { article_id } = req.params;
-    const { user_name, body } = req.body;
+    const { username, body } = req.body;
 
-    const promises = [insertCommentsByArticleId(article_id, body)];
+    if (!username || !body) {
+        res.status(400).send({ msg: "Invalid request!" });
+    }
+    const promises = [
+        updateCommentsByArticleId(article_id, body),
+        checkArticleExist(username, "users", "username"),
+    ];
 
     if (article_id) {
         promises.push(checkArticleExist(article_id, "articles", "article_id"));
-    }
-    if (user_name) {
-        promises.push(checkArticleExist(user_name, "users", "username"));
     }
 
     return Promise.all(promises)
         .then((allPromises) => {
             const comments = allPromises[0];
-            res.status(201).send({ comments });
+            res.status(201).send({ comment: comments.body });
         })
         .catch(next);
 };

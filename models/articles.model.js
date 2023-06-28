@@ -42,15 +42,13 @@ exports.selectCommentsByArticleId = (article_id) => {
     });
 };
 
-exports.insertCommentsByArticleId = (article_id, body) => {
-    const values = Object.values(body);
+exports.updateCommentsByArticleId = (article_id, body) => {
     return db
         .query(
-            format(
-                `INSERT INTO  comments 
-                ( article_id, author, votes, created_at, body )VALUES %L RETURNING * ;`,
-                [values]
-            )
+            `UPDATE comments
+                    SET body = $1 
+                    WHERE article_id = $2 RETURNING *;`,
+            [body, article_id]
         )
         .then(({ rows }) => {
             return rows[0];

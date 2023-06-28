@@ -11,6 +11,5 @@ exports.checkArticleExist = (article_id, table_name, column) => {
             if (!rows.length) {
                 return Promise.reject({ status: 404, msg: "Not found!" });
             }
-            // return rows;
         });
 };

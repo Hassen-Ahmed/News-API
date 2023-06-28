@@ -156,100 +156,65 @@ describe("All requests", () => {
         });
     });
     describe("POST /api/articles/:article_id/comments", () => {
-        test("201: should return 200 and insert/post to add new record to the comments table", () => {
+        test("201: should returned and update/post body comments table body column with article_id", () => {
             return request(app)
                 .post("/api/articles/9/comments")
                 .expect(201)
                 .send({
-                    user_name: "butter_bridge",
-                    body: {
-                        article_id: 9,
-                        author: "butter_bridge",
-                        votes: 20,
-                        created_at: new Date(),
-                        body: "post request will going to be ok",
-                    },
+                    username: "butter_bridge",
+                    body: "post request will going to be ok",
                 })
                 .then(({ body }) => {
-                    const { comments } = body;
-                    expect(comments).toHaveProperty("comment_id", expect.any(Number));
-                    expect(comments).toHaveProperty("body", expect.any(String));
-                    expect(comments).toHaveProperty("article_id", expect.any(Number));
-                    expect(comments).toHaveProperty("author", expect.any(String));
-                    expect(comments).toHaveProperty("votes", expect.any(Number));
-                    expect(comments).toHaveProperty("created_at", expect.any(String));
+                    const { comment } = body;
+                    expect(comment).toBe("post request will going to be ok");
                 });
         });
-        test("404 should be returned when the article_id not exist in articles table but the body is ok", () => {
+        test("404 should be returned when the article_id not exist in articles table also in comments table.", () => {
             return request(app)
                 .post("/api/articles/9999/comments")
                 .expect(404)
                 .send({
-                    user_name: "butter_bridge",
-                    body: {
-                        article_id: 9,
-                        author: "butter_bridge",
-                        votes: 20,
-                        created_at: new Date(),
-                        body: "post request will going to be ok",
-                    },
+                    username: "butter_bridge",
+                    body: "post request will going to be ok",
                 })
                 .then(({ body }) => {
                     const { msg } = body;
                     expect(msg).toBe("Not found!");
                 });
         });
-        test("404 should be returned when user_name from request body not exits in users table", () => {
+        test("404 should be returned when username from request body not exits in users table", () => {
             return request(app)
                 .post("/api/articles/9/comments")
                 .expect(404)
                 .send({
-                    user_name: "David",
-                    body: {
-                        article_id: 9,
-                        author: "butter_bridge",
-                        votes: 20,
-                        created_at: new Date(),
-                        body: "post request will going to be ok",
-                    },
+                    username: "David",
+                    body: "post request will going to be ok",
                 })
                 .then(({ body }) => {
                     const { msg } = body;
                     expect(msg).toBe("Not found!");
                 });
         });
-        test("400 should be returned when the property article_id of the body cause foreign key relationship problem", () => {
+
+        test("400 should be returned when article_id is nonsense or invalid data type.", () => {
             return request(app)
-                .post("/api/articles/9/comments")
+                .post("/api/articles/nonsense/comments")
                 .expect(400)
                 .send({
-                    user_name: "David",
-                    body: {
-                        article_id: 999,
-                        author: "butter_bridge",
-                        votes: 20,
-                        created_at: new Date(),
-                        body: "post request will going to be ok",
-                    },
+                    username: "David",
+                    body: "post request will going to be ok",
                 })
                 .then(({ body }) => {
                     const { msg } = body;
                     expect(msg).toBe("Invalid request!");
                 });
         });
-        test("400 should be returned when the property author of the body cause foreign key relationship problem", () => {
+        test("400 should be returned when requested body is not include appropriate properties.", () => {
             return request(app)
                 .post("/api/articles/9/comments")
                 .expect(400)
                 .send({
-                    user_name: "David",
-                    body: {
-                        article_id: 9,
-                        author: "unKnown",
-                        votes: 20,
-                        created_at: new Date(),
-                        body: "post request will going to be ok",
-                    },
+                    body: "post request will going to be ok",
                 })
                 .then(({ body }) => {
                     const { msg } = body;
