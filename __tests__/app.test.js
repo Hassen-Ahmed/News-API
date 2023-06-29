@@ -155,7 +155,7 @@ describe("All requests", () => {
                 });
         });
     });
-    describe("POST /api/articles/:article_id/comments", () => {
+    describe("POST /api/articles/:article_id/comments ", () => {
         test("201: should returned and update/post body comments table body column with article_id", () => {
             return request(app)
                 .post("/api/articles/9/comments")
