@@ -16,6 +16,5 @@ if (ENV === "production") {
     config.max = 2;
 }
 
-module.exports = new Pool({
-    password: process.env.PG_PASSWORD,
-});
+const db = new Pool(config);
+module.exports = db;
