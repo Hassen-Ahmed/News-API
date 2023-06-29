@@ -9,6 +9,7 @@ const {
     patchArticleById,
 } = require("./controllers/articles.controller");
 const descriptionsData = require("./endpoints.json");
+const { deleteCommentById } = require("./controllers/comments.controller");
 const app = express();
 
 app.use(express.json());
@@ -28,6 +29,8 @@ app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 app.post("/api/articles/:article_id/comments", postCommentById);
 
 app.patch("/api/articles/:article_id", patchArticleById);
+
+app.delete("/api/comments/:comment_id", deleteCommentById);
 
 app.all("*", (req, res) => {
     res.status(404).send({ msg: "Not found!" });
