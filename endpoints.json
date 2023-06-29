@@ -84,5 +84,18 @@
         "description": "It will delete comments from table when if comments table have comment_id equal to the params id i.e /:comment_id ",
         "queries": [],
         "exampleResponse": []
+    },
+    "GET /api/users": {
+        "description": "It will help us to get all users from users table which have appropriate properties",
+        "queries": [],
+        "exampleResponse": {
+            "users": [
+                {
+                    "username": "butter_bridge",
+                    "name": "jonny",
+                    "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+                }
+            ]
+        }
     }
 }

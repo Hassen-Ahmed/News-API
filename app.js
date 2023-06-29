@@ -10,6 +10,7 @@ const {
 } = require("./controllers/articles.controller");
 const descriptionsData = require("./endpoints.json");
 const { deleteCommentById } = require("./controllers/comments.controller");
+const { getAllUsers } = require("./controllers/users.controller");
 const app = express();
 
 app.use(express.json());
@@ -31,6 +32,8 @@ app.post("/api/articles/:article_id/comments", postCommentById);
 app.patch("/api/articles/:article_id", patchArticleById);
 
 app.delete("/api/comments/:comment_id", deleteCommentById);
+
+app.get("/api/users", getAllUsers);
 
 app.all("*", (req, res) => {
     res.status(404).send({ msg: "Not found!" });
