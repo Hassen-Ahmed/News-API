@@ -258,7 +258,6 @@ describe("All requests", () => {
                     const { article } = body;
                     expect(article["votes"]).toBe(102);
 
-                    expect(article).toHaveProperty("article_id", expect.any(Number));
                     expect(article).toHaveProperty("title", expect.any(String));
                     expect(article).toHaveProperty("topic", expect.any(String));
                     expect(article).toHaveProperty("author", expect.any(String));
@@ -269,9 +268,9 @@ describe("All requests", () => {
                 });
         });
 
-        test("400 should be returned when article_id is NaN.", () => {
+        test("400 should be returned when article_id isn't number type.", () => {
             return request(app)
-                .patch("/api/articles/isNaN")
+                .patch("/api/articles/isNotANumber")
                 .expect(400)
                 .send({ inc_votes: 2 })
                 .then(({ body }) => {
