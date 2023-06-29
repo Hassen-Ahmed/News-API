@@ -1,4 +1,5 @@
 const db = require("../db/connection");
+const format = require("pg-format");
 
 exports.selectArticlesById = (article_id) => {
     let query = "SELECT * FROM articles WHERE article_id = $1";
@@ -39,4 +40,17 @@ exports.selectCommentsByArticleId = (article_id) => {
     return db.query(query, [article_id]).then(({ rows }) => {
         return rows;
     });
+};
+
+exports.postCommentsByArticleId = (article_id, body) => {
+    return db
+        .query(
+            `UPDATE comments
+                    SET body = $1 
+                    WHERE article_id = $2 RETURNING *;`,
+            [body, article_id]
+        )
+        .then(({ rows }) => {
+            return rows[0];
+        });
 };

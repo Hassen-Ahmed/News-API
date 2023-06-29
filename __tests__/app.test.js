@@ -155,4 +155,97 @@ describe("All requests", () => {
                 });
         });
     });
+    describe("POST /api/articles/:article_id/comments ", () => {
+        test("201: should returned and update/post body comments table body column with article_id", () => {
+            return request(app)
+                .post("/api/articles/1/comments")
+                .expect(201)
+                .send({
+                    username: "butter_bridge",
+                    body: "post request will going to be ok",
+                })
+                .then(({ body }) => {
+                    const { comments } = body;
+                    expect(comments.article_id).toBe(1);
+                    expect(comments).toHaveProperty("comment_id", expect.any(Number));
+                    expect(comments).toHaveProperty("body", expect.any(String));
+                    expect(comments).toHaveProperty("article_id", expect.any(Number));
+                    expect(comments).toHaveProperty("author", expect.any(String));
+                    expect(comments).toHaveProperty("votes", expect.any(Number));
+                    expect(comments).toHaveProperty("created_at", expect.any(String));
+                });
+        });
+        test("201: should returned and update/post body comments table body column with article_id and if the request body have others properties it will ignores them.", () => {
+            return request(app)
+                .post("/api/articles/1/comments")
+                .expect(201)
+                .send({
+                    username: "butter_bridge",
+                    body: "post request will going to be ok",
+                    otherProp: 'I don"t no!',
+                })
+                .then(({ body }) => {
+                    const { comments } = body;
+                    expect(comments.article_id).toBe(1);
+                    expect(comments).toHaveProperty("comment_id", expect.any(Number));
+                    expect(comments).toHaveProperty("body", expect.any(String));
+                    expect(comments).toHaveProperty("article_id", expect.any(Number));
+                    expect(comments).toHaveProperty("author", expect.any(String));
+                    expect(comments).toHaveProperty("votes", expect.any(Number));
+                    expect(comments).toHaveProperty("created_at", expect.any(String));
+                });
+        });
+        test("404 should be returned when the article_id not exist in articles table also in comments table.", () => {
+            return request(app)
+                .post("/api/articles/9999/comments")
+                .expect(404)
+                .send({
+                    username: "butter_bridge",
+                    body: "post request will going to be ok",
+                })
+                .then(({ body }) => {
+                    const { msg } = body;
+                    expect(msg).toBe("Not found!");
+                });
+        });
+        test("404 should be returned when username from request body not exits in users table", () => {
+            return request(app)
+                .post("/api/articles/9/comments")
+                .expect(404)
+                .send({
+                    username: "David",
+                    body: "post request will going to be ok",
+                })
+                .then(({ body }) => {
+                    const { msg } = body;
+                    expect(msg).toBe("Not found!");
+                });
+        });
+
+        test("400 should be returned when article_id is nonsense or invalid data type.", () => {
+            return request(app)
+                .post("/api/articles/nonsense/comments")
+                .expect(400)
+                .send({
+                    username: "David",
+                    body: "post request will going to be ok",
+                })
+                .then(({ body }) => {
+                    const { msg } = body;
+                    expect(msg).toBe("Invalid request!");
+                });
+        });
+        test("400 should be returned when requested body is not include appropriate properties.", () => {
+            return request(app)
+                .post("/api/articles/9/comments")
+                .expect(400)
+                .send({
+                    body: "post request will going to be ok",
+                })
+                .then(({ body }) => {
+                    const { msg } = body;
+                    expect(msg).toBe("Invalid request!");
+                });
+        });
+    });
 });

@@ -1,6 +1,6 @@
 const db = require("../db/connection");
 
-function selectAllTopics() {
+exports.selectAllTopics = () => {
     const query = "SELECT * FROM topics";
 
     return db
@@ -11,6 +11,4 @@ function selectAllTopics() {
         .catch((err) => {
             return Promise.reject({ status: 404, msg: "Not found" });
         });
-}
-
-module.exports = { selectAllTopics };
+};
