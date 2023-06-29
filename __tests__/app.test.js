@@ -329,4 +329,28 @@ describe("All requests", () => {
                 });
         });
     });
+    describe("GET ", () => {
+        test("200 should be returned when successful fetched users data and respond.", () => {
+            return request(app)
+                .get("/api/users")
+                .expect(200)
+                .then(({ body }) => {
+                    const { users } = body;
+                    expect(users).toHaveLength(4);
+                    users.forEach((user) => {
+                        expect(user).toHaveProperty("username", expect.any(String));
+                        expect(user).toHaveProperty("name", expect.any(String));
+                        expect(user).toHaveProperty("avatar_url", expect.any(String));
+                    });
+                });
+        });
+        test("404 should be returned when not user data is found", () => {
+            return request(app)
+                .get("/api/usersUnKnow")
+                .expect(404)
+                .then(({ body }) => {
+                    expect(body.msg).toBe("Not found!");
+                });
+        });
+    });
 });
