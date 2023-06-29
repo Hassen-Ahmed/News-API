@@ -1,5 +1,4 @@
 const db = require("../db/connection");
-const format = require("pg-format");
 
 exports.selectArticlesById = (article_id) => {
     let query = "SELECT * FROM articles WHERE article_id = $1";
