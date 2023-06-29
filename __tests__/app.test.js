@@ -166,6 +166,27 @@ describe("All requests", () => {
                 })
                 .then(({ body }) => {
                     const { comments } = body;
+                    expect(comments.article_id).toBe(1);
+                    expect(comments).toHaveProperty("comment_id", expect.any(Number));
+                    expect(comments).toHaveProperty("body", expect.any(String));
+                    expect(comments).toHaveProperty("article_id", expect.any(Number));
+                    expect(comments).toHaveProperty("author", expect.any(String));
+                    expect(comments).toHaveProperty("votes", expect.any(Number));
+                    expect(comments).toHaveProperty("created_at", expect.any(String));
+                });
+        });
+        test("201: should returned and update/post body comments table body column with article_id and if the request body have others properties it will ignores them.", () => {
+            return request(app)
+                .post("/api/articles/1/comments")
+                .expect(201)
+                .send({
+                    username: "butter_bridge",
+                    body: "post request will going to be ok",
+                    otherProp: 'I don"t no!',
+                })
+                .then(({ body }) => {
+                    const { comments } = body;
+                    expect(comments.article_id).toBe(1);
                     expect(comments).toHaveProperty("comment_id", expect.any(Number));
                     expect(comments).toHaveProperty("body", expect.any(String));
                     expect(comments).toHaveProperty("article_id", expect.any(Number));

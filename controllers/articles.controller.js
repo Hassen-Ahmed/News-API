@@ -44,9 +44,6 @@ exports.postCommentById = (req, res, next) => {
     const { article_id } = req.params;
     const { username, body } = req.body;
 
-    if (!username || !body) {
-        res.status(400).send({ msg: "Invalid request!" });
-    }
     const promises = [
         postCommentsByArticleId(article_id, body),
         checkArticleExist(username, "users", "username"),
