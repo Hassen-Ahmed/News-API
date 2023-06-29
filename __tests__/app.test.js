@@ -158,15 +158,20 @@ describe("All requests", () => {
     describe("POST /api/articles/:article_id/comments ", () => {
         test("201: should returned and update/post body comments table body column with article_id", () => {
             return request(app)
-                .post("/api/articles/9/comments")
+                .post("/api/articles/1/comments")
                 .expect(201)
                 .send({
                     username: "butter_bridge",
                     body: "post request will going to be ok",
                 })
                 .then(({ body }) => {
-                    const { comment } = body;
-                    expect(comment).toBe("post request will going to be ok");
+                    const { comments } = body;
+                    expect(comments).toHaveProperty("comment_id", expect.any(Number));
+                    expect(comments).toHaveProperty("body", expect.any(String));
+                    expect(comments).toHaveProperty("article_id", expect.any(Number));
+                    expect(comments).toHaveProperty("author", expect.any(String));
+                    expect(comments).toHaveProperty("votes", expect.any(Number));
+                    expect(comments).toHaveProperty("created_at", expect.any(String));
                 });
         });
         test("404 should be returned when the article_id not exist in articles table also in comments table.", () => {

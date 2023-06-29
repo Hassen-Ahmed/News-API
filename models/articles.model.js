@@ -42,7 +42,7 @@ exports.selectCommentsByArticleId = (article_id) => {
     });
 };
 
-exports.updateCommentsByArticleId = (article_id, body) => {
+exports.postCommentsByArticleId = (article_id, body) => {
     return db
         .query(
             `UPDATE comments

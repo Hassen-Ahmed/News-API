@@ -2,7 +2,7 @@ const {
     selectArticlesById,
     selectAllArticles,
     selectCommentsByArticleId,
-    updateCommentsByArticleId,
+    postCommentsByArticleId,
 } = require("../models/articles.model");
 const { checkArticleExist } = require("../models/check-exist-item");
 
@@ -48,7 +48,7 @@ exports.postCommentById = (req, res, next) => {
         res.status(400).send({ msg: "Invalid request!" });
     }
     const promises = [
-        updateCommentsByArticleId(article_id, body),
+        postCommentsByArticleId(article_id, body),
         checkArticleExist(username, "users", "username"),
     ];
 
@@ -59,7 +59,7 @@ exports.postCommentById = (req, res, next) => {
     return Promise.all(promises)
         .then((allPromises) => {
             const comments = allPromises[0];
-            res.status(201).send({ comment: comments.body });
+            res.status(201).send({ comments });
         })
         .catch(next);
 };
