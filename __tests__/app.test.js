@@ -306,4 +306,27 @@ describe("All requests", () => {
                 });
         });
     });
+    describe("DELETE ", () => {
+        test("204 should be returned when the deletion is successful.", () => {
+            return request(app).delete("/api/comments/9").expect(204);
+        });
+
+        test("400 should be returned when comment_id is NaN.", () => {
+            return request(app)
+                .delete("/api/comments/isNaN")
+                .expect(400)
+                .then(({ body }) => {
+                    expect(body.msg).toBe("Invalid request!");
+                });
+        });
+
+        test("404 should be returned when comment_id is valid, but not found by resource.", () => {
+            return request(app)
+                .delete("/api/comments/999")
+                .expect(404)
+                .then(({ body }) => {
+                    expect(body.msg).toBe("Not found!");
+                });
+        });
+    });
 });
