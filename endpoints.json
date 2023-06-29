@@ -68,5 +68,16 @@
                 }
             ]
         }
+    },
+    "PATCH /api/articles/:article_id": {
+        "description": "It will help us to patch/update specific part from articles table",
+        "queries": [],
+        "exampleResponse": {
+            "articles": [
+                {
+                    "title": "Seafood substitutions are increasing"
+                }
+            ]
+        }
     }
 }

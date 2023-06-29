@@ -248,4 +248,62 @@ describe("All requests", () => {
                 });
         });
     });
+    describe("PATCH /api/articles/:article_id", () => {
+        it("200 should be returned when article_id and body validation are valid", () => {
+            return request(app)
+                .patch("/api/articles/1")
+                .expect(200)
+                .send({ inc_votes: 2 })
+                .then(({ body }) => {
+                    const { article } = body;
+                    expect(article["votes"]).toBe(102);
+
+                    expect(article).toHaveProperty("title", expect.any(String));
+                    expect(article).toHaveProperty("topic", expect.any(String));
+                    expect(article).toHaveProperty("author", expect.any(String));
+                    expect(article).toHaveProperty("body", expect.any(String));
+                    expect(article).toHaveProperty("created_at", expect.any(String));
+                    expect(article).toHaveProperty("votes", expect.any(Number));
+                    expect(article).toHaveProperty("article_img_url", expect.any(String));
+                });
+        });
+
+        test("400 should be returned when article_id isn't number type.", () => {
+            return request(app)
+                .patch("/api/articles/isNotANumber")
+                .expect(400)
+                .send({ inc_votes: 2 })
+                .then(({ body }) => {
+                    expect(body.msg).toBe("Invalid request!");
+                });
+        });
+        test("400 should be returned when datatype of inc_votes is not a number.", () => {
+            return request(app)
+                .patch("/api/articles/9")
+                .expect(400)
+                .send({ inc_votes: "I am STRING!" })
+                .then(({ body }) => {
+                    expect(body.msg).toBe("Invalid request!");
+                });
+        });
+        test("400 should be returned when the requested body is an empty object.", () => {
+            return request(app)
+                .patch("/api/articles/9")
+                .expect(400)
+                .send({})
+                .then(({ body }) => {
+                    expect(body.msg).toBe("Invalid request!");
+                });
+        });
+
+        test("404 should be returned when article_id is valid, but not found by resource.", () => {
+            return request(app)
+                .patch("/api/articles/999")
+                .expect(404)
+                .send({ inc_votes: 9 })
+                .then(({ body }) => {
+                    expect(body.msg).toBe("Not found!");
+                });
+        });
+    });
 });

@@ -3,6 +3,7 @@ const {
     selectAllArticles,
     selectCommentsByArticleId,
     postCommentsByArticleId,
+    updateArticleById,
 } = require("../models/articles.model");
 const { checkArticleExist } = require("../models/check-exist-item");
 
@@ -57,6 +58,24 @@ exports.postCommentById = (req, res, next) => {
         .then((allPromises) => {
             const comments = allPromises[0];
             res.status(201).send({ comments });
+        })
+        .catch(next);
+};
+
+exports.patchArticleById = (req, res, next) => {
+    const { article_id } = req.params;
+    const { inc_votes } = req.body;
+
+    const promises = [updateArticleById(article_id, inc_votes)];
+    const requestBodyProperties = Object.entries(req.body);
+
+    if (!requestBodyProperties.length === 1)
+        return Promise.reject({ status: 400, msg: "Invalid request!" });
+
+    return Promise.all(promises)
+        .then((allPromiseResult) => {
+            const article = allPromiseResult[0];
+            res.status(200).send({ article });
         })
         .catch(next);
 };
