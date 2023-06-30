@@ -499,4 +499,25 @@ describe("All requests", () => {
                 });
         });
     });
+    describe("GET /api/users/:username", () => {
+        test("200 should respond and user object when username is the list of users", () => {
+            return request(app)
+                .get("/api/users/butter_bridge")
+                .expect(200)
+                .then(({ body }) => {
+                    const { user } = body;
+                    expect(user).toHaveProperty("username", expect.any(String));
+                    expect(user).toHaveProperty("name", expect.any(String));
+                    expect(user).toHaveProperty("avatar_url", expect.any(String));
+                });
+        });
+        test("404 should respond when username isNot listed in users", () => {
+            return request(app)
+                .get("/api/users/somethingElse")
+                .expect(404)
+                .then(({ body }) => {
+                    expect(body.msg).toBe("Not found!");
+                });
+        });
+    });
 });
