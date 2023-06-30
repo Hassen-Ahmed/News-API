@@ -499,7 +499,7 @@ describe("All requests", () => {
                 });
         });
     });
-    describe.only("GET /api/users/:username", () => {
+    describe("GET /api/users/:username", () => {
         test("200 should respond and user object when username is the list of users", () => {
             return request(app)
                 .get("/api/users/butter_bridge")
