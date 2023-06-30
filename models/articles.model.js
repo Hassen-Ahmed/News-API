@@ -8,7 +8,7 @@ exports.selectArticlesById = (article_id) => {
     });
 };
 
-exports.selectAllArticles = async (topic, sort_by, order) => {
+exports.selectAllArticles = async (topic, sort_by = "created_at", order) => {
     const fetchingTopicsInArticles = await db
         .query(`SELECT DISTINCT topic FROM articles;`)
         .then(({ rows }) => {
@@ -16,7 +16,7 @@ exports.selectAllArticles = async (topic, sort_by, order) => {
             return topics;
         });
 
-    let greenList = [
+    const greenList = [
         "desc",
         "asc",
         ...fetchingTopicsInArticles,
@@ -41,24 +41,23 @@ exports.selectAllArticles = async (topic, sort_by, order) => {
     if (topic) {
         if (!greenList.includes(topic)) {
             return db.query(`select * from topics where slug = $1`, [topic]).then(({ rows }) => {
-                return !rows.length
-                    ? Promise.reject({ status: 400, msg: "Bad request" })
-                    : Promise.reject({ status: 404, msg: "Not found!" });
+                if (rows) return Promise.reject({ status: 404, msg: "Not found!" });
             });
         }
         query += `\nWHERE topic = $1 `;
         queryValues.push(topic);
     }
 
-    let isSame = sort_by === "body";
+    const isSame = sort_by === "body";
     if (sort_by && !greenList.includes(sort_by))
         return Promise.reject({
             status: isSame ? 404 : 400,
             msg: isSame ? "Not found!" : "Bad request",
         });
 
-    if (order && !greenList.includes(order))
+    if (order && !greenList.includes(order)) {
         return Promise.reject({ status: 400, msg: "Bad request" });
+    }
 
     query += `GROUP BY articles.article_id ${
         sort_by

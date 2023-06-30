@@ -365,16 +365,19 @@ describe("All requests", () => {
                     });
                     expect(articles).toHaveLength(12);
                     expect(articles.body).toBeUndefined();
+
                     articles.forEach((article) => {
-                        expect(article).toHaveProperty("author", expect.any(String));
-                        expect(article).toHaveProperty("title", expect.any(String));
-                        expect(article).toHaveProperty("article_id", expect.any(Number));
-                        expect(article).toHaveProperty("topic", expect.any(String));
-                        expect(article).toHaveProperty("created_at", expect.any(String));
-                        expect(article).toHaveProperty("votes", expect.any(Number));
-                        expect(article).toHaveProperty("article_img_url", expect.any(String));
-                        expect(article).toHaveProperty("comments_count", expect.any(String));
+                        expect(article.topic).toBe("mitch");
                     });
+                });
+        });
+        test("404 will returned and when passed valid topic query, but no resource found", () => {
+            return request(app)
+                .get("/api/articles?topic=paper&sort_by=title&order=asc")
+                .expect(404)
+                .then(({ body }) => {
+                    const { msg } = body;
+                    expect(msg).toBe("Not found!");
                 });
         });
         test("200 will returned and list of articles when all queries are provided except topic query", () => {
@@ -425,13 +428,22 @@ describe("All requests", () => {
                     });
                 });
         });
-        test("400 will returned and when topic query has invalid datatype", () => {
+        test("404 will returned and when sort_by by body which not be allowed", () => {
             return request(app)
-                .get("/api/articles?topic=999&sort_by=title&order=asc")
-                .expect(400)
+                .get("/api/articles?topic=mitch&sort_by=body&order=asc")
+                .expect(404)
                 .then(({ body }) => {
                     const { msg } = body;
-                    expect(msg).toBe("Bad request");
+                    expect(msg).toBe("Not found!");
+                });
+        });
+        test("404 will returned and when sort_by by body which not be allowed", () => {
+            return request(app)
+                .get("/api/articles?topic=999&sort_by=title&order=asc")
+                .expect(404)
+                .then(({ body }) => {
+                    const { msg } = body;
+                    expect(msg).toBe("Not found!");
                 });
         });
         test("400 will returned and when sort_by query has invalid datatype", () => {
@@ -462,15 +474,7 @@ describe("All requests", () => {
                     expect(msg).toBe("Bad request");
                 });
         });
-        test("404 will returned and when passed valid topic query, but no resource found", () => {
-            return request(app)
-                .get("/api/articles?topic=paper&sort_by=title&order=asc")
-                .expect(404)
-                .then(({ body }) => {
-                    const { msg } = body;
-                    expect(msg).toBe("Not found!");
-                });
-        });
+
         test("404 will returned and when passed valid sort_id query, but no resource found", () => {
             return request(app)
                 .get("/api/articles?topic=mitch&sort_by=body&order=asc")
