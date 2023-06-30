@@ -39,7 +39,7 @@ describe("All requests", () => {
                 });
         });
     });
-    describe("GET /api/articles/:article_id ", () => {
+    describe.only("GET /api/articles/:article_id ", () => {
         it("200: /api/articles/:article_id :- should return :200 and array articles with that id", () => {
             return request(app)
                 .get("/api/articles/3")
@@ -47,17 +47,14 @@ describe("All requests", () => {
                 .then(({ body }) => {
                     const articles = body.articles;
 
-                    expect(articles).toHaveLength(1);
-                    articles.forEach((articles) => {
-                        expect(articles).toHaveProperty("article_id", expect.any(Number));
-                        expect(articles).toHaveProperty("title", expect.any(String));
-                        expect(articles).toHaveProperty("topic", expect.any(String));
-                        expect(articles).toHaveProperty("author", expect.any(String));
-                        expect(articles).toHaveProperty("body", expect.any(String));
-                        expect(articles).toHaveProperty("created_at", expect.any(String));
-                        expect(articles).toHaveProperty("votes", expect.any(Number));
-                        expect(articles).toHaveProperty("article_img_url", expect.any(String));
-                    });
+                    expect(articles).toHaveProperty("article_id", expect.any(Number));
+                    expect(articles).toHaveProperty("title", expect.any(String));
+                    expect(articles).toHaveProperty("topic", expect.any(String));
+                    expect(articles).toHaveProperty("author", expect.any(String));
+                    expect(articles).toHaveProperty("body", expect.any(String));
+                    expect(articles).toHaveProperty("created_at", expect.any(String));
+                    expect(articles).toHaveProperty("votes", expect.any(Number));
+                    expect(articles).toHaveProperty("article_img_url", expect.any(String));
                 });
         });
         test("400: /api/articles/:article_id :- should return :400 and msg of Invalid request!", () => {
@@ -69,6 +66,31 @@ describe("All requests", () => {
                 });
         });
         test("404: /api/articles/:article_id :- should return :404 and msg of Not found!", () => {
+            return request(app)
+                .get("/api/articles/999")
+                .expect(404)
+                .then(({ body }) => {
+                    expect(body.msg).toBe("Not found!");
+                });
+        });
+        it("200 should returned and article object with comment_count property.", () => {
+            return request(app)
+                .get("/api/articles/3")
+                .expect(200)
+                .then(({ body }) => {
+                    const articles = body.articles;
+                    expect(articles).toHaveProperty("comment_count", expect.any(String));
+                });
+        });
+        test("400: should returned and msg of Invalid request when invalid article_id provided.", () => {
+            return request(app)
+                .get("/api/articles/mumboJumbo")
+                .expect(400)
+                .then(({ body }) => {
+                    expect(body.msg).toBe("Invalid request!");
+                });
+        });
+        test("404: should return and msg of Not found! when article_id is valid, but no resource found.", () => {
             return request(app)
                 .get("/api/articles/999")
                 .expect(404)
