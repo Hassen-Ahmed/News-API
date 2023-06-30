@@ -15,9 +15,9 @@ const app = express();
 
 app.use(express.json());
 
-app.get("/api", (req, res) => {
-    res.status(200).send(descriptionsData);
-});
+app.get("/", (_, res) => res.status(200).send({ msg: "Hello welcome!" }));
+
+app.get("/api", (_, res) => res.status(200).send(descriptionsData));
 
 app.get("/api/topics", getAllTopics);
 
