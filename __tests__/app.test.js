@@ -39,7 +39,7 @@ describe("All requests", () => {
                 });
         });
     });
-    describe.only("GET /api/articles/:article_id ", () => {
+    describe("GET /api/articles/:article_id ", () => {
         it("200: /api/articles/:article_id :- should return :200 and array articles with that id", () => {
             return request(app)
                 .get("/api/articles/3")
@@ -375,7 +375,7 @@ describe("All requests", () => {
                 });
         });
     });
-    describe.only("GET /api/articles (queries)", () => {
+    describe("GET /api/articles (queries)", () => {
         test("200 will returned and list of articles when all queries are provided", () => {
             return request(app)
                 .get("/api/articles?topic=mitch&sort_by=title&order=asc")
