@@ -499,7 +499,7 @@ describe("All requests", () => {
                 });
         });
     });
-    describe("GET /api/users/:username", () => {
+    describe.only("GET /api/users/:username", () => {
         test("200 should respond and user object when username is the list of users", () => {
             return request(app)
                 .get("/api/users/butter_bridge")
@@ -517,6 +517,14 @@ describe("All requests", () => {
                 .expect(404)
                 .then(({ body }) => {
                     expect(body.msg).toBe("Not found!");
+                });
+        });
+        test("400 should be returned when the datatype of username is other than string", () => {
+            return request(app)
+                .get("/api/users/555")
+                .expect(400)
+                .then(({ body }) => {
+                    expect(body.msg).toBe("Invalid request!");
                 });
         });
     });
