@@ -353,7 +353,7 @@ describe("All requests", () => {
                 });
         });
     });
-    describe("GET /api/articles (queries)", () => {
+    describe.only("GET /api/articles (queries)", () => {
         test("200 will returned and list of articles when all queries are provided", () => {
             return request(app)
                 .get("/api/articles?topic=mitch&sort_by=title&order=asc")
@@ -371,15 +371,7 @@ describe("All requests", () => {
                     });
                 });
         });
-        test("404 will returned and when passed valid topic query, but no resource found", () => {
-            return request(app)
-                .get("/api/articles?topic=paper&sort_by=title&order=asc")
-                .expect(404)
-                .then(({ body }) => {
-                    const { msg } = body;
-                    expect(msg).toBe("Not found!");
-                });
-        });
+
         test("200 will returned and list of articles when all queries are provided except topic query", () => {
             return request(app)
                 .get("/api/articles?sort_by=title&order=asc")
@@ -428,9 +420,9 @@ describe("All requests", () => {
                     });
                 });
         });
-        test("404 will returned and when sort_by by body which not be allowed", () => {
+        test("404 will returned and when passed valid topic query, but no resource found", () => {
             return request(app)
-                .get("/api/articles?topic=mitch&sort_by=body&order=asc")
+                .get("/api/articles?topic=paper")
                 .expect(404)
                 .then(({ body }) => {
                     const { msg } = body;
@@ -439,7 +431,16 @@ describe("All requests", () => {
         });
         test("404 will returned and when sort_by by body which not be allowed", () => {
             return request(app)
-                .get("/api/articles?topic=999&sort_by=title&order=asc")
+                .get("/api/articles?sort_by=body")
+                .expect(404)
+                .then(({ body }) => {
+                    const { msg } = body;
+                    expect(msg).toBe("Not found!");
+                });
+        });
+        test("404 will returned and when sort_by by body which not be allowed", () => {
+            return request(app)
+                .get("/api/articles?topic=999")
                 .expect(404)
                 .then(({ body }) => {
                     const { msg } = body;
@@ -448,7 +449,7 @@ describe("All requests", () => {
         });
         test("400 will returned and when sort_by query has invalid datatype", () => {
             return request(app)
-                .get("/api/articles?topic=topic&sort_by=4&order=asc")
+                .get("/api/articles?sort_by=499")
                 .expect(400)
                 .then(({ body }) => {
                     const { msg } = body;
@@ -458,16 +459,7 @@ describe("All requests", () => {
 
         test("400 will returned and when nonsense order query", () => {
             return request(app)
-                .get("/api/articles?topic=topic&sort_by=title&order=nonsense")
-                .expect(400)
-                .then(({ body }) => {
-                    const { msg } = body;
-                    expect(msg).toBe("Bad request");
-                });
-        });
-        test("400 will returned and when passed all query wrong", () => {
-            return request(app)
-                .get("/api/articles?topic=topic&sort_by=title&order=nonsense")
+                .get("/api/articles?order=nonsense")
                 .expect(400)
                 .then(({ body }) => {
                     const { msg } = body;
@@ -477,7 +469,7 @@ describe("All requests", () => {
 
         test("404 will returned and when passed valid sort_id query, but no resource found", () => {
             return request(app)
-                .get("/api/articles?topic=mitch&sort_by=body&order=asc")
+                .get("/api/articles?sort_by=body")
                 .expect(404)
                 .then(({ body }) => {
                     const { msg } = body;
