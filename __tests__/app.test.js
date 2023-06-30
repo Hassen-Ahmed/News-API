@@ -519,5 +519,13 @@ describe("All requests", () => {
                     expect(body.msg).toBe("Not found!");
                 });
         });
+        test("400 should be returned when the datatype of username is other than string", () => {
+            return request(app)
+                .get("/api/users/555")
+                .expect(400)
+                .then(({ body }) => {
+                    expect(body.msg).toBe("Invalid request!");
+                });
+        });
     });
 });
