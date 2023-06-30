@@ -8,7 +8,7 @@ exports.selectArticlesById = (article_id) => {
     });
 };
 
-exports.selectAllArticles = async (topic, sort_by = "created_at", order) => {
+exports.selectAllArticles = async (topic, sort_by = "created_at", order = "desc") => {
     const fetchingTopicsInArticles = await db
         .query(`SELECT DISTINCT topic FROM articles;`)
         .then(({ rows }) => {
@@ -17,8 +17,10 @@ exports.selectAllArticles = async (topic, sort_by = "created_at", order) => {
         });
 
     const greenList = [
-        "desc",
+        "ASC",
+        "DESC",
         "asc",
+        "desc",
         ...fetchingTopicsInArticles,
         "author",
         "title",
@@ -60,9 +62,7 @@ exports.selectAllArticles = async (topic, sort_by = "created_at", order) => {
     }
 
     query += `GROUP BY articles.article_id ${
-        sort_by
-            ? `ORDER BY ${sort_by} ${order ? order : "DESC"}; `
-            : "ORDER BY articles.article_id DESC"
+        sort_by ? `ORDER BY ${sort_by} ${order}; ` : "ORDER BY articles.article_id DESC"
     };`;
 
     return await db.query(query, queryValues).then(({ rows }) => rows);
