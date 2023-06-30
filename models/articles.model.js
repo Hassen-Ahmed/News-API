@@ -1,5 +1,4 @@
 const db = require("../db/connection");
-
 exports.selectArticlesById = (article_id) => {
     let query = "SELECT * FROM articles WHERE article_id = $1";
 
@@ -9,25 +8,64 @@ exports.selectArticlesById = (article_id) => {
     });
 };
 
-exports.selectAllArticles = () => {
-    let query = `SELECT 
-    articles.author, 
-    title, 
-    articles.article_id, 
-    topic, 
-    articles.created_at, 
-    articles.votes, 
-    articles.article_img_url, 
-    COUNT(comments.author) AS comments_count  
-    FROM articles 
-    LEFT JOIN comments ON comments.article_id = articles.article_id 
-    GROUP BY articles.article_id
-    ORDER BY articles.created_at DESC
-    ;
-    `;
-    return db.query(query).then(({ rows }) => {
-        return rows;
-    });
+exports.selectAllArticles = async (topic, sort_by = "created_at", order = "desc") => {
+    const fetchingTopicsInArticles = await db
+        .query(`SELECT DISTINCT topic FROM articles;`)
+        .then(({ rows }) => {
+            let topics = rows.map((row) => row.topic);
+            return topics;
+        });
+
+    const greenList = [
+        "ASC",
+        "DESC",
+        "asc",
+        "desc",
+        ...fetchingTopicsInArticles,
+        "author",
+        "title",
+        "article_id",
+        "topic",
+        "created_at",
+        "votes",
+        "article_img_url",
+    ];
+
+    let query = `SELECT articles.author, title, 
+                 articles.article_id, topic, 
+                 articles.created_at, articles.votes, articles.article_img_url, 
+                 COUNT(comments.author) AS comments_count  
+                 FROM articles 
+                 LEFT JOIN comments ON comments.article_id = articles.article_id `;
+
+    const queryValues = [];
+
+    if (topic) {
+        if (!greenList.includes(topic)) {
+            return db.query(`select * from topics where slug = $1`, [topic]).then(({ rows }) => {
+                if (rows) return Promise.reject({ status: 404, msg: "Not found!" });
+            });
+        }
+        query += `\nWHERE topic = $1 `;
+        queryValues.push(topic);
+    }
+
+    const isSame = sort_by === "body";
+    if (sort_by && !greenList.includes(sort_by))
+        return Promise.reject({
+            status: isSame ? 404 : 400,
+            msg: isSame ? "Not found!" : "Bad request",
+        });
+
+    if (order && !greenList.includes(order)) {
+        return Promise.reject({ status: 400, msg: "Bad request" });
+    }
+
+    query += `GROUP BY articles.article_id ${
+        sort_by ? `ORDER BY ${sort_by} ${order}; ` : "ORDER BY articles.article_id DESC"
+    };`;
+
+    return await db.query(query, queryValues).then(({ rows }) => rows);
 };
 
 exports.selectCommentsByArticleId = (article_id) => {
