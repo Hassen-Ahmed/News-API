@@ -1,3 +1,4 @@
+const format = require("pg-format");
 const db = require("../db/connection");
 exports.selectArticlesById = (article_id) => {
     let query = `SELECT 
@@ -124,4 +125,28 @@ exports.updateArticleById = (article_id, inc_votes) => {
             if (!rows.length) return Promise.reject({ status: 404, msg: "Not found!" });
             return rows[0];
         });
+};
+
+exports.insertArticle = async ({ title, topic, author, body }) => {
+    const query = `
+    INSERT INTO articles 
+    (title, topic, author, body)
+    VALUES %L RETURNING *;
+    `;
+    return await db.query(format(query, [[title, topic, author, body]])).then(async ({ rows }) => {
+        const queryForCount = `
+        SELECT
+        count(comments.article_id) AS comment_count
+        FROM
+        articles 
+        LEFT JOIN comments ON comments.article_id = articles.article_id
+        WHERE articles.article_id = $1
+        GROUP BY (articles.article_id);
+        `;
+        const comment_count = await db.query(queryForCount, [rows[0].article_id]);
+
+        const article = rows[0];
+        article.comment_count = comment_count.rows[0].comment_count;
+        return article;
+    });
 };

@@ -124,5 +124,26 @@
                 "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
             }
         }
+    },
+
+    "POST /api/articles": {
+        "description": "It will us to insert new article ot articles table.",
+        "queries": [],
+        "exampleResponse": {
+            "comment": [
+                {
+                    "author": "jes..",
+                    "title": "Running a Node app...",
+                    "body": "bunch of body...",
+                    "topic": "codding",
+                    "article_img_url": "http...",
+
+                    "article_id": 2,
+                    "votes": 0,
+                    "created_at": "timeStamp",
+                    "comment_count": "2"
+                }
+            ]
+        }
     }
 }
