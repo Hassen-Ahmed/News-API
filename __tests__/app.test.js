@@ -13,7 +13,7 @@ afterAll(() => {
     return db.end();
 });
 
-describe("All requests", () => {
+describe("All requests method and endpoints container", () => {
     describe("GET /api", () => {
         test("200: and return the contents of endpoint.json file", () => {
             return request(app)
@@ -177,7 +177,7 @@ describe("All requests", () => {
                 });
         });
     });
-    describe("POST /api/articles/:article_id/comments ", () => {
+    describe("POST /api/articles/:article_id/comments", () => {
         test("201: should returned and update/post body comments table body column with article_id", () => {
             return request(app)
                 .post("/api/articles/1/comments")
@@ -328,7 +328,7 @@ describe("All requests", () => {
                 });
         });
     });
-    describe("DELETE ", () => {
+    describe("DELETE /api/comments/9", () => {
         test("204 should be returned when the deletion is successful.", () => {
             return request(app).delete("/api/comments/9").expect(204);
         });
@@ -351,7 +351,7 @@ describe("All requests", () => {
                 });
         });
     });
-    describe("GET ", () => {
+    describe("GET /api/users", () => {
         test("200 should be returned when successful fetched users data and respond.", () => {
             return request(app)
                 .get("/api/users")
@@ -525,6 +525,83 @@ describe("All requests", () => {
                 .expect(400)
                 .then(({ body }) => {
                     expect(body.msg).toBe("Invalid request!");
+                });
+        });
+    });
+    describe("PATCH /api/comments/:comment_id", () => {
+        test("200 should be respond when passed valid comment_id and body", () => {
+            return request(app)
+                .patch("/api/comments/1")
+                .expect(200)
+                .send({ inc_votes: -1 })
+                .then(({ body }) => {
+                    const { comment } = body;
+                    expect(comment["votes"]).toBe(15);
+                    expect(comment).toHaveProperty("comment_id", expect.any(Number));
+                    expect(comment).toHaveProperty("comment_id", expect.any(Number));
+                    expect(comment).toHaveProperty("body", expect.any(String));
+                    expect(comment).toHaveProperty("author", expect.any(String));
+                    expect(comment).toHaveProperty("created_at", expect.any(String));
+                });
+        });
+        test("200 should be respond and ignore other properties in the body except the inc_votes.", () => {
+            return request(app)
+                .patch("/api/comments/3")
+                .expect(200)
+                .send({ inc_votes: 20, i_am_hacker: "I am joking!" })
+                .then(({ body }) => {
+                    const { comment } = body;
+                    expect(comment["votes"]).toBe(120);
+                });
+        });
+        test("404 should be respond when passed valid comment_id, but no resource found.", () => {
+            return request(app)
+                .patch("/api/comments/98989")
+                .expect(404)
+                .send({ inc_votes: 20 })
+                .then(({ body }) => {
+                    const { msg } = body;
+                    expect(msg).toBe("Not found!");
+                });
+        });
+        test("400 should be respond when passed invalid comment_id", () => {
+            return request(app)
+                .patch("/api/comments/otherThanNumber")
+                .expect(400)
+                .send({ inc_votes: 20 })
+                .then(({ body }) => {
+                    const { msg } = body;
+                    expect(msg).toBe("Invalid request!");
+                });
+        });
+        test("400 should be respond when passed wrong data type for inc_votes ", () => {
+            return request(app)
+                .patch("/api/comments/2")
+                .expect(400)
+                .send({ inc_votes: "increase" })
+                .then(({ body }) => {
+                    const { msg } = body;
+                    expect(msg).toBe("Invalid request!");
+                });
+        });
+        test("400 should be respond when passed empty request body", () => {
+            return request(app)
+                .patch("/api/comments/2")
+                .expect(400)
+                .send({})
+                .then(({ body }) => {
+                    const { msg } = body;
+                    expect(msg).toBe("Invalid request!");
+                });
+        });
+        test("400 should be respond when passed other properties in request body except inc_votes", () => {
+            return request(app)
+                .patch("/api/comments/2")
+                .expect(400)
+                .send({ comment_id: 29, author: "butter_bridge" })
+                .then(({ body }) => {
+                    const { msg } = body;
+                    expect(msg).toBe("Invalid request!");
                 });
         });
     });
