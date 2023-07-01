@@ -4,6 +4,7 @@ const {
     selectCommentsByArticleId,
     postCommentsByArticleId,
     updateArticleById,
+    insertArticle,
 } = require("../models/articles.model");
 const { checkArticleExist } = require("../models/check-exist-item");
 
@@ -77,6 +78,15 @@ exports.patchArticleById = (req, res, next) => {
         .then((allPromiseResult) => {
             const article = allPromiseResult[0];
             res.status(200).send({ article });
+        })
+        .catch(next);
+};
+
+exports.postArticle = (req, res, next) => {
+    const { body } = req;
+    insertArticle(body)
+        .then((article) => {
+            res.status(201).send({ article });
         })
         .catch(next);
 };
