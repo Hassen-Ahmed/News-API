@@ -893,4 +893,30 @@ describe("All requests method and endpoints container", () => {
                 });
         });
     });
+    describe("DELETE /api/articles/:article_id", () => {
+        test("204 should be respond when article_id is valid which have relationship with comments table.", () => {
+            return request(app).delete("/api/articles/3").expect(204);
+        });
+        test("204 should be respond when article_id is valid which NOT have relationship with comments table.", () => {
+            return request(app).delete("/api/articles/2").expect(204);
+        });
+        test("404 should be respond when article_id is valid, but no resource found.", () => {
+            return request(app)
+                .delete("/api/articles/9898")
+                .expect(404)
+                .then(({ body }) => {
+                    const { msg } = body;
+                    expect(msg).toBe("Not found!");
+                });
+        });
+        test("400 should be respond when article_id is invalid data type.", () => {
+            return request(app)
+                .delete("/api/articles/notNumber")
+                .expect(400)
+                .then(({ body }) => {
+                    const { msg } = body;
+                    expect(msg).toBe("Invalid request!");
+                });
+        });
+    });
 });
