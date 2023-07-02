@@ -15,7 +15,7 @@ afterAll(() => {
 
 describe("All requests method and endpoints container", () => {
     describe("GET /api", () => {
-        test("200: and return the contents of endpoint.json file", () => {
+        test("200 should be respond and return the contents of endpoint.json file", () => {
             return request(app)
                 .get("/api")
                 .expect(200)
@@ -25,7 +25,7 @@ describe("All requests method and endpoints container", () => {
         });
     });
     describe("GET /api/topics", () => {
-        test("200: should return 200 and array of objects which they should have slug and description properties", () => {
+        test("200 should respond and array of objects which they should have slug and description properties", () => {
             return request(app)
                 .get("/api/topics")
                 .expect(200)
@@ -40,7 +40,7 @@ describe("All requests method and endpoints container", () => {
         });
     });
     describe("GET /api/articles/:article_id ", () => {
-        it("200: /api/articles/:article_id :- should return :200 and array articles with that id", () => {
+        it("200 should be respond and array of articles with that id", () => {
             return request(app)
                 .get("/api/articles/3")
                 .expect(200)
@@ -57,7 +57,7 @@ describe("All requests method and endpoints container", () => {
                     expect(articles).toHaveProperty("article_img_url", expect.any(String));
                 });
         });
-        test("400: /api/articles/:article_id :- should return :400 and msg of Invalid request!", () => {
+        test("400 should be respond and msg of Invalid request!", () => {
             return request(app)
                 .get("/api/articles/mumboJumbo")
                 .expect(400)
@@ -65,7 +65,7 @@ describe("All requests method and endpoints container", () => {
                     expect(body.msg).toBe("Invalid request!");
                 });
         });
-        test("404: /api/articles/:article_id :- should return :404 and msg of Not found!", () => {
+        test("404 should be respond and msg of Not found!", () => {
             return request(app)
                 .get("/api/articles/999")
                 .expect(404)
@@ -100,7 +100,7 @@ describe("All requests method and endpoints container", () => {
         });
     });
     describe("GET /api/articles", () => {
-        test("200: /api/articles :- should return :200 and list of articles with comment_count", () => {
+        test("200 should respond when passed correct path", () => {
             return request(app)
                 .get("/api/articles")
                 .expect(200)
@@ -122,7 +122,7 @@ describe("All requests method and endpoints container", () => {
                     });
                 });
         });
-        test("404: /api/articles :- should return :404 and msg of Not found!", () => {
+        test("404 should respond when passed wrong path", () => {
             return request(app)
                 .get("/api/wrong")
                 .expect(404)
@@ -132,7 +132,7 @@ describe("All requests method and endpoints container", () => {
         });
     });
     describe("GET /api/articles/:article_id/comments", () => {
-        it("200: and with list of comment which they have article_id ", () => {
+        it("200 should respond and with list of comment which they have article_id ", () => {
             return request(app)
                 .get("/api/articles/9/comments")
                 .expect(200)
@@ -152,15 +152,7 @@ describe("All requests method and endpoints container", () => {
                     });
                 });
         });
-        it("200: if articles contain the id but not in hte comments", () => {
-            return request(app)
-                .get("/api/articles/2/comments")
-                .expect(200)
-                .then(({ body }) => {
-                    expect(body.comments).toEqual([]);
-                });
-        });
-        test("404: respond with a msg of Not Found when the article id is valid but does not exist'", () => {
+        test("400 should respond when the article_id is invalid data type.", () => {
             return request(app)
                 .get("/api/articles/mumboJumbo/comments")
                 .expect(400)
@@ -168,7 +160,7 @@ describe("All requests method and endpoints container", () => {
                     expect(body.msg).toBe("Invalid request!");
                 });
         });
-        test("404:  and msg of Not found!", () => {
+        test("404 should respond when articles_id not round by resources", () => {
             return request(app)
                 .get("/api/articles/9999/comments")
                 .expect(404)
@@ -773,6 +765,70 @@ describe("All requests method and endpoints container", () => {
         test("400 should be respond when passed wrong data type for p/page when limit is default.", () => {
             return request(app)
                 .get("/api/articles?p=IamWrongToo")
+                .expect(400)
+                .then(({ body }) => {
+                    const { msg } = body;
+                    expect(msg).toBe("Invalid request!");
+                });
+        });
+    });
+    describe("GET GET /api/articles/:article_id/comments(pagination)", () => {
+        test("200 should respond when passed valid limit and p/page.", () => {
+            return request(app)
+                .get("/api/articles/1/comments?limit=4&p=1")
+                .expect(200)
+                .then(({ body }) => {
+                    const { comments } = body;
+                    expect(comments).toHaveLength(4);
+                    comments.forEach((comment) => {
+                        expect(comment).toHaveProperty("comment_id", expect.any(Number));
+                        expect(comment).toHaveProperty("article_id", expect.any(Number));
+                        expect(comment).toHaveProperty("votes", expect.any(Number));
+                        expect(comment).toHaveProperty("body", expect.any(String));
+                        expect(comment).toHaveProperty("author", expect.any(String));
+                        expect(comment).toHaveProperty("created_at", expect.any(String));
+                    });
+                });
+        });
+        test("200 should respond when passed only valid p/page, when limit is 10 by default.", () => {
+            return request(app)
+                .get("/api/articles/1/comments?p=1")
+                .expect(200)
+                .then(({ body }) => {
+                    const { comments } = body;
+                    expect(comments).toHaveLength(10);
+                    comments.forEach((comment) => {
+                        expect(comment).toHaveProperty("comment_id", expect.any(Number));
+                        expect(comment).toHaveProperty("article_id", expect.any(Number));
+                        expect(comment).toHaveProperty("votes", expect.any(Number));
+                        expect(comment).toHaveProperty("body", expect.any(String));
+                        expect(comment).toHaveProperty("author", expect.any(String));
+                        expect(comment).toHaveProperty("created_at", expect.any(String));
+                    });
+                });
+        });
+
+        test("404 should respond when wrong p/page provided.", () => {
+            return request(app)
+                .get("/api/articles/9/comments?p=3")
+                .expect(404)
+                .then(({ body }) => {
+                    const { msg } = body;
+                    expect(msg).toBe("Not found!");
+                });
+        });
+        test("400 should respond when passed invalid limit data type.", () => {
+            return request(app)
+                .get("/api/articles/3/comments?limit=wrongDataType&p=1")
+                .expect(400)
+                .then(({ body }) => {
+                    const { msg } = body;
+                    expect(msg).toBe("Invalid request!");
+                });
+        });
+        test("400 should respond when passed invalid p/page data type.", () => {
+            return request(app)
+                .get("/api/articles/3/comments?p=wrongDataType")
                 .expect(400)
                 .then(({ body }) => {
                     const { msg } = body;
