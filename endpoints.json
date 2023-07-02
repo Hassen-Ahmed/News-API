@@ -33,6 +33,11 @@
             ]
         }
     },
+    "DELETE /api/articles/:article_id": {
+        "description": "It will delete article which has this article_id from articles table also it will delete comment if article_id has relationship with comments table.",
+        "queries": [],
+        "exampleResponse": {}
+    },
     "GET /api/articles": {
         "description": "serves an array of all topics",
         "queries": ["topic", "sort_by", "order", "limit", "p/page"],

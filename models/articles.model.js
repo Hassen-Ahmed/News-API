@@ -172,3 +172,26 @@ exports.insertArticle = async ({ title, topic, author, body }) => {
         return article;
     });
 };
+
+exports.deleteArticlesById = async (article_id) => {
+    const listOfCommentsArticle = await db
+        .query(`SELECT article_id FROM comments`)
+        .then(({ rows }) => rows.map((row) => row.article_id));
+
+    if (listOfCommentsArticle.includes(+article_id))
+        await db.query(
+            `DELETE FROM comments
+             WHERE article_id = $1`,
+            [article_id]
+        );
+
+    return await db
+        .query(
+            `DELETE FROM articles
+             WHERE article_id = $1 RETURNING *;`,
+            [article_id]
+        )
+        .then(({ rows }) => {
+            if (!rows.length) return Promise.reject({ status: 404, msg: "Not found!" });
+        });
+};
