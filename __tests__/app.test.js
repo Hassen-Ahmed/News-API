@@ -836,4 +836,61 @@ describe("All requests method and endpoints container", () => {
                 });
         });
     });
+    describe("POST /api/topics", () => {
+        test("201 should be respond when right contents are passed into the request body.", () => {
+            return request(app)
+                .post("/api/topics")
+                .send({ slug: "topic name here", description: "description here" })
+                .expect(201)
+                .then(({ body }) => {
+                    const { topic } = body;
+                    expect(topic).toHaveProperty("slug", expect.any(String));
+                    expect(topic).toHaveProperty("description", expect.any(String));
+                    expect(topic.slug).toBe("topic name here");
+                    expect(topic.description).toBe("description here");
+                });
+        });
+        test("201 should be respond when right contents are passed into the request body and ignore other properties if exits in the requested object.", () => {
+            return request(app)
+                .post("/api/topics")
+                .send({
+                    slug: "topic name here",
+                    description: "description here",
+                    other_1: "ignore me",
+                    other_2: "ignore me too!",
+                })
+                .expect(201)
+                .then(({ body }) => {
+                    const { topic } = body;
+                    expect(topic).toHaveProperty("slug", expect.any(String));
+                    expect(topic).toHaveProperty("description", expect.any(String));
+                    expect(topic.slug).toBe("topic name here");
+                    expect(topic.description).toBe("description here");
+                    expect(topic.hasOwnProperty("other_1")).toBe(false);
+                    expect(topic.hasOwnProperty("other_2")).toBe(false);
+                });
+        });
+        test("400 should be respond when request body has properties other than slug and description.", () => {
+            return request(app)
+                .post("/api/topics")
+                .send({ username: "ignore me", address: "ignore me too!" })
+
+                .expect(400)
+                .then(({ body }) => {
+                    const { msg } = body;
+                    expect(msg).toBe("Invalid request!");
+                });
+        });
+        test("400 should be respond when request body is empty object.", () => {
+            return request(app)
+                .post("/api/topics")
+                .send({ other_1: "ignore me", other_2: "ignore me too!" })
+
+                .expect(400)
+                .then(({ body }) => {
+                    const { msg } = body;
+                    expect(msg).toBe("Invalid request!");
+                });
+        });
+    });
 });
