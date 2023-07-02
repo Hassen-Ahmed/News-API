@@ -9,6 +9,13 @@
             "topics": [{ "slug": "football", "description": "Footie!" }]
         }
     },
+    "POST /api/topics": {
+        "description": "It will insert new topic into topics table by inserting requested body to topics table",
+        "queries": [],
+        "exampleResponse": {
+            "topics": [{ "slug": "football", "description": "Footie!" }]
+        }
+    },
     "GET /api/articles/:article_id": {
         "description": "It will help us to get all articles which there article_id === :article_id ",
         "queries": [],
