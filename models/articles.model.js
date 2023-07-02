@@ -28,7 +28,7 @@ exports.selectAllArticles = async (
     sort_by = "created_at",
     order = "desc",
     limit = 10,
-    p
+    p = 0
 ) => {
     const fetchingTopicsInArticles = await db
         .query(`SELECT DISTINCT topic FROM articles;`)
@@ -99,13 +99,25 @@ exports.selectAllArticles = async (
     });
 };
 
-exports.selectCommentsByArticleId = (article_id) => {
+exports.selectCommentsByArticleId = (article_id, limit = 10, p = 0) => {
     let query = `
     SELECT * FROM comments 
     WHERE article_id = $1
-    ORDER BY created_at ASC;
+    ORDER BY created_at ASC
     `;
-    return db.query(query, [article_id]).then(({ rows }) => {
+    const queryValues = [article_id];
+
+    let page = p === 0 ? 1 : p;
+    let limitOffsetValue = limit * (page - 1);
+
+    if (p) {
+        queryValues.push(limit);
+        queryValues.push(limitOffsetValue);
+        query += `LIMIT $2 OFFSET $3; `;
+    }
+
+    return db.query(query, queryValues).then(({ rows }) => {
+        if (!rows.length) return Promise.reject({ status: 404, msg: "Not found!" });
         return rows;
     });
 };

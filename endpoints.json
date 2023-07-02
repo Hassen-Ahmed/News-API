@@ -45,8 +45,8 @@
         }
     },
     "GET /api/articles/:article_id/comments": {
-        "description": "It will help us to get all comments with right article_id",
-        "queries": [],
+        "description": "It will help us to get all comments with right article_id and limit and p/page number",
+        "queries": ["limit", "p/page"],
         "exampleResponse": {
             "comment": [
                 {
