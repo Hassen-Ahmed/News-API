@@ -713,4 +713,71 @@ describe("All requests method and endpoints container", () => {
                 });
         });
     });
+    describe("GET /api/articles (pagination)", () => {
+        test("200 should be respond when passed valid limit and p/page queries.", () => {
+            return request(app)
+                .get("/api/articles?limit=5&p=3")
+                .expect(200)
+                .then(({ body }) => {
+                    const { articles } = body;
+                    expect(articles.length).toBeLessThanOrEqual(5);
+                    articles.forEach((article) => {
+                        expect(article).toHaveProperty("article_id", expect.any(Number));
+                        expect(article).toHaveProperty("author", expect.any(String));
+                        expect(article).toHaveProperty("title", expect.any(String));
+                        expect(article).toHaveProperty("topic", expect.any(String));
+                        expect(article).toHaveProperty("created_at", expect.any(String));
+                        expect(article).toHaveProperty("votes", expect.any(Number));
+                        expect(article).toHaveProperty("comments_count", expect.any(String));
+                        expect(article).toHaveProperty("article_img_url", expect.any(String));
+                    });
+                });
+        });
+        test("200 should be respond when passed only p/page.", () => {
+            return request(app)
+                .get("/api/articles?p=1")
+                .expect(200)
+                .then(({ body }) => {
+                    const { articles } = body;
+                    expect(articles.length).toBeLessThanOrEqual(10);
+                    articles.forEach((article) => {
+                        expect(article).toHaveProperty("article_id", expect.any(Number));
+                        expect(article).toHaveProperty("author", expect.any(String));
+                        expect(article).toHaveProperty("title", expect.any(String));
+                        expect(article).toHaveProperty("topic", expect.any(String));
+                        expect(article).toHaveProperty("created_at", expect.any(String));
+                        expect(article).toHaveProperty("votes", expect.any(Number));
+                        expect(article).toHaveProperty("comments_count", expect.any(String));
+                        expect(article).toHaveProperty("article_img_url", expect.any(String));
+                    });
+                });
+        });
+        test("404 should be respond when passed limit and p/page number which is not exist in articles table.", () => {
+            return request(app)
+                .get("/api/articles?limit=25&p=399")
+                .expect(404)
+                .then(({ body }) => {
+                    const { msg } = body;
+                    expect(msg).toBe("Not found!");
+                });
+        });
+        test("400 should be respond when passed wrong data type for limit.", () => {
+            return request(app)
+                .get("/api/articles?limit=wrongDataType&p=2")
+                .expect(400)
+                .then(({ body }) => {
+                    const { msg } = body;
+                    expect(msg).toBe("Invalid request!");
+                });
+        });
+        test("400 should be respond when passed wrong data type for p/page when limit is default.", () => {
+            return request(app)
+                .get("/api/articles?p=IamWrongToo")
+                .expect(400)
+                .then(({ body }) => {
+                    const { msg } = body;
+                    expect(msg).toBe("Invalid request!");
+                });
+        });
+    });
 });

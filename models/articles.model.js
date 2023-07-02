@@ -21,15 +21,15 @@ exports.selectArticlesById = (article_id) => {
         if (!rows.length) return Promise.reject({ status: 404, msg: "Not found!" });
         return rows[0];
     });
-    // let query = "SELECT * FROM articles WHERE article_id = $1";
-
-    // return db.query(query, [article_id]).then(({ rows }) => {
-    //     if (!rows.length) return Promise.reject({ status: 404, msg: "Not found!" });
-    //     return rows;
-    // });
 };
 
-exports.selectAllArticles = async (topic, sort_by = "created_at", order = "desc") => {
+exports.selectAllArticles = async (
+    topic,
+    sort_by = "created_at",
+    order = "desc",
+    limit = 10,
+    p
+) => {
     const fetchingTopicsInArticles = await db
         .query(`SELECT DISTINCT topic FROM articles;`)
         .then(({ rows }) => {
@@ -83,10 +83,20 @@ exports.selectAllArticles = async (topic, sort_by = "created_at", order = "desc"
     }
 
     query += `GROUP BY articles.article_id ${
-        sort_by ? `ORDER BY ${sort_by} ${order}; ` : "ORDER BY articles.article_id DESC"
-    };`;
+        sort_by ? `ORDER BY ${sort_by} ${order} ` : "ORDER BY articles.article_id DESC "
+    }`;
+    let page = p === 0 ? 1 : p;
+    let limitOffsetValue = limit * (page - 1);
 
-    return await db.query(query, queryValues).then(({ rows }) => rows);
+    if (p) {
+        queryValues.push(limit);
+        queryValues.push(limitOffsetValue);
+        query += `LIMIT $1 offset $2 `;
+    }
+    return await db.query(query, queryValues).then(({ rows }) => {
+        if (!rows.length) return Promise.reject({ status: 404, msg: "Not found!" });
+        return rows;
+    });
 };
 
 exports.selectCommentsByArticleId = (article_id) => {
