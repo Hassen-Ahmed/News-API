@@ -713,28 +713,7 @@ describe("All requests method and endpoints container", () => {
                 });
         });
     });
-
-    /*
-    GET /api/articles (pagination)
-    GET /api/articles?limit=num&p=2&total_count
-    p = page == OFFSET 
-    
-    :In sql 
-        LIMIT limit offset (limit * (p-1))
-    :set max LIMIT number of users
-
-    :200 should be respond when passed valid limit and p/page queries. ✅️
-    :200 should be respond when passed only p/page.
-        i.e: /api/articles?p=1✅️
-    :404 should be respond when passed limit and p/page number which is not exist in articles table.
-       i.e /api/articles?limit=15&p=399✅️
-
-    :400 should be respond when passed wrong data type for limit.✅️
-    :400 should be respond when passed wrong data type for p/page when limit is default.✅️
-    :
-    */
-
-    describe.only("GET /api/articles (pagination)", () => {
+    describe("GET /api/articles (pagination)", () => {
         test("200 should be respond when passed valid limit and p/page queries.", () => {
             return request(app)
                 .get("/api/articles?limit=5&p=3")
