@@ -30,19 +30,17 @@ exports.selectAllArticles = async (
     limit = 10,
     p = 0
 ) => {
-    const fetchingTopicsInArticles = await db
-        .query(`SELECT DISTINCT topic FROM articles;`)
-        .then(({ rows }) => {
-            let topics = rows.map((row) => row.topic);
-            return topics;
-        });
+    const fetchingTopics = await db.query(`SELECT * FROM topics;`).then(({ rows }) => {
+        let topics = rows.map((row) => row.slug);
+        return topics;
+    });
 
     const greenList = [
         "ASC",
         "DESC",
         "asc",
         "desc",
-        ...fetchingTopicsInArticles,
+        ...fetchingTopics,
         "author",
         "title",
         "article_id",
@@ -51,7 +49,6 @@ exports.selectAllArticles = async (
         "votes",
         "article_img_url",
     ];
-
     let query = `SELECT articles.author, title, 
                  articles.article_id, topic, 
                  articles.created_at, articles.votes, articles.article_img_url, 

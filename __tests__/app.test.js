@@ -370,18 +370,18 @@ describe("All requests method and endpoints container", () => {
     describe("GET /api/articles (queries)", () => {
         test("200 will respond and list of articles when all queries are provided", () => {
             return request(app)
-                .get("/api/articles?topic=mitch&sort_by=title&order=asc")
+                .get("/api/articles?topic=cats&sort_by=title&order=asc")
                 .expect(200)
                 .then(({ body }) => {
                     const articles = body.articles;
                     expect(articles).toBeSortedBy("title", {
                         descending: false,
                     });
-                    expect(articles).toHaveLength(12);
+                    expect(articles).toHaveLength(1);
                     expect(articles.body).toBeUndefined();
 
                     articles.forEach((article) => {
-                        expect(article.topic).toBe("mitch");
+                        expect(article.topic).toBe("cats");
                     });
                 });
         });
