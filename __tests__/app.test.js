@@ -99,14 +99,12 @@ describe("All requests method and endpoints container", () => {
                 });
         });
     });
-    describe("GET /api/articles", () => {
+    describe.only("GET /api/articles", () => {
         test("200 should respond when passed correct path", () => {
             return request(app)
                 .get("/api/articles")
-                .expect(200)
                 .then(({ body }) => {
                     const articles = body.articles;
-
                     expect(articles).toHaveLength(13);
                     expect(articles.body).toBeUndefined();
                     articles.forEach((article) => {

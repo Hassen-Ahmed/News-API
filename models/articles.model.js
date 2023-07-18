@@ -90,9 +90,12 @@ exports.selectAllArticles = async (
         queryValues.push(limitOffsetValue);
         query += `LIMIT $1 offset $2 `;
     }
+    const totalArticles = await db.query(`SELECT * FROM articles;`).then(({ rows }) => {
+        return rows;
+    });
     return await db.query(query, queryValues).then(({ rows }) => {
         if (!rows.length) return Promise.reject({ status: 404, msg: "Not found!" });
-        return rows;
+        return { articles: rows, totalArticles: totalArticles.length };
     });
 };
 
@@ -115,6 +118,7 @@ exports.selectCommentsByArticleId = (article_id, limit = 10, p = 0) => {
 
     return db.query(query, queryValues).then(({ rows }) => {
         if (!rows.length) return Promise.reject({ status: 404, msg: "Not found!" });
+
         return rows;
     });
 };

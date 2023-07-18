@@ -23,8 +23,11 @@ exports.getAllArticles = (req, res, next) => {
     const { topic, sort_by, order } = req.query;
     const { limit, p } = req.query;
     selectAllArticles(topic, sort_by, order, limit, p)
-        .then((articles) => {
-            res.status(200).send({ articles: articles, totalArticles: articles.length });
+        .then((articlesData) => {
+            res.status(200).send({
+                articles: articlesData.articles,
+                totalArticles: articlesData.totalArticles,
+            });
         })
         .catch(next);
 };
