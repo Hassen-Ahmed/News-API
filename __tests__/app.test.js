@@ -109,7 +109,6 @@ describe("All requests method and endpoints container", () => {
 
                     expect(articles).toHaveLength(13);
                     expect(articles.body).toBeUndefined();
-
                     articles.forEach((article) => {
                         expect(article).toHaveProperty("author", expect.any(String));
                         expect(article).toHaveProperty("title", expect.any(String));

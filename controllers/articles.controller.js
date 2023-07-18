@@ -24,7 +24,7 @@ exports.getAllArticles = (req, res, next) => {
     const { limit, p } = req.query;
     selectAllArticles(topic, sort_by, order, limit, p)
         .then((articles) => {
-            res.status(200).send({ articles });
+            res.status(200).send({ articles: articles, totalArticles: articles.length });
         })
         .catch(next);
 };
