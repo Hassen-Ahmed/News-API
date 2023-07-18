@@ -49,7 +49,7 @@ exports.selectAllArticles = async (
         "votes",
         "article_img_url",
     ];
-    let query = `SELECT articles.author, title, 
+    let query = `SELECT articles.author, title, articles.body,
                  articles.article_id, topic, 
                  articles.created_at, articles.votes, articles.article_img_url, 
                  COUNT(comments.author) AS comments_count  
