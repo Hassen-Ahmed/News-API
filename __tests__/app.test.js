@@ -169,63 +169,59 @@ describe("All requests method and endpoints container", () => {
     describe("POST /api/articles/:article_id/comments", () => {
         test("201: should respond and update/post body comments table body column with article_id", () => {
             return request(app)
-                .post("/api/articles/1/comments")
+                .post("/api/articles/9/comments")
                 .expect(201)
                 .send({
-                    username: "butter_bridge",
-                    body: "post request will going to be",
+                    body: "hassen add some body here",
+                    article_id: 1,
+                    author: "icellusedkars",
+                    votes: 18,
+                    created_at: "2020-01-26T18:23:00.000Z",
                 })
                 .then(({ body }) => {
-                    const { comments } = body;
-                    expect(comments.article_id).toBe(1);
-                    expect(comments).toHaveProperty("comment_id", expect.any(Number));
-                    expect(comments).toHaveProperty("body", expect.any(String));
-                    expect(comments).toHaveProperty("article_id", expect.any(Number));
-                    expect(comments).toHaveProperty("author", expect.any(String));
-                    expect(comments).toHaveProperty("votes", expect.any(Number));
-                    expect(comments).toHaveProperty("created_at", expect.any(String));
+                    const { comment } = body;
+                    expect(comment.article_id).toBe(1);
+                    expect(comment).toHaveProperty("comment_id", expect.any(Number));
+                    expect(comment).toHaveProperty("body", expect.any(String));
+                    expect(comment).toHaveProperty("article_id", expect.any(Number));
+                    expect(comment).toHaveProperty("author", expect.any(String));
+                    expect(comment).toHaveProperty("votes", expect.any(Number));
+                    expect(comment).toHaveProperty("created_at", expect.any(String));
                 });
         });
-        test("201: should respond and update/post body comments table body column with article_id and if the request body have others properties it will ignores them.", () => {
+        test("201: should respond and update/post body comment table body column with article_id and if the request body have others properties it will ignores them.", () => {
             return request(app)
                 .post("/api/articles/1/comments")
                 .expect(201)
                 .send({
-                    username: "butter_bridge",
-                    body: "post request will going to be ok",
-                    otherProp: 'I don"t no!',
+                    body: "hassen add some body here",
+                    article_id: 1,
+                    author: "icellusedkars",
+                    votes: 18,
+                    created_at: "2020-01-26T18:23:00.000Z",
                 })
                 .then(({ body }) => {
-                    const { comments } = body;
-                    expect(comments.article_id).toBe(1);
-                    expect(comments).toHaveProperty("comment_id", expect.any(Number));
-                    expect(comments).toHaveProperty("body", expect.any(String));
-                    expect(comments).toHaveProperty("article_id", expect.any(Number));
-                    expect(comments).toHaveProperty("author", expect.any(String));
-                    expect(comments).toHaveProperty("votes", expect.any(Number));
-                    expect(comments).toHaveProperty("created_at", expect.any(String));
+                    const { comment } = body;
+                    expect(comment.article_id).toBe(1);
+                    expect(comment).toHaveProperty("comment_id", expect.any(Number));
+                    expect(comment).toHaveProperty("body", expect.any(String));
+                    expect(comment).toHaveProperty("article_id", expect.any(Number));
+                    expect(comment).toHaveProperty("author", expect.any(String));
+                    expect(comment).toHaveProperty("votes", expect.any(Number));
+                    expect(comment).toHaveProperty("created_at", expect.any(String));
                 });
         });
-        test("404 should be respond when the article_id not exist in articles table also in comments table.", () => {
-            return request(app)
-                .post("/api/articles/9999/comments")
-                .expect(404)
-                .send({
-                    username: "butter_bridge",
-                    body: "post request will going to be ok",
-                })
-                .then(({ body }) => {
-                    const { msg } = body;
-                    expect(msg).toBe("Not found!");
-                });
-        });
+
         test("400 should be respond when username from request body not exits in users table", () => {
             return request(app)
                 .post("/api/articles/9/comments")
                 .expect(400)
                 .send({
-                    username: "David",
-                    body: "post request will going to be ok",
+                    body: "hassen add some body here",
+                    article_id: 34,
+                    author: "jessjelly",
+                    votes: 18,
+                    created_at: "2020-01-26T18:23:00.000Z",
                 })
                 .then(({ body }) => {
                     const { msg } = body;

@@ -44,22 +44,11 @@ exports.getCommentsByArticleId = (req, res, next) => {
 };
 
 exports.postCommentById = (req, res, next) => {
-    const { article_id } = req.params;
-    const { username, body } = req.body;
+    const { body, article_id, author, votes, created_at } = req.body;
 
-    const promises = [
-        postCommentsByArticleId(article_id, body, username),
-        checkArticleExist(username, "users", "username"),
-    ];
-
-    if (article_id) {
-        promises.push(checkArticleExist(article_id, "articles", "article_id"));
-    }
-
-    return Promise.all(promises)
-        .then((allPromises) => {
-            const comments = allPromises[0];
-            res.status(201).send({ comments });
+    postCommentsByArticleId(body, article_id, author, votes, created_at)
+        .then((comment) => {
+            res.status(201).send({ comment });
         })
         .catch(next);
 };

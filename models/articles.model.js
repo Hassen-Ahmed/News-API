@@ -123,16 +123,16 @@ exports.selectCommentsByArticleId = (article_id, limit = 10, p = 0) => {
     });
 };
 
-exports.postCommentsByArticleId = (article_id, body, username) => {
+exports.postCommentsByArticleId = (body, article_id, author, votes, created_at) => {
     return db
         .query(
-            `UPDATE comments
-                    SET body = $1,
-                     author = $2
-                    WHERE article_id = $3 RETURNING *;`,
-            [body, username, article_id]
+            ` INSERT INTO comments
+            (body, article_id, author, votes,created_at)
+            VALUES ($1, $2, $3, $4, $5) RETURNING *; `,
+            [body, article_id, author, votes, created_at]
         )
         .then(({ rows }) => {
+            if (!rows.length) return Promise.reject({ status: 404, msg: "Not found!" });
             return rows[0];
         });
 };
