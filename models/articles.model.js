@@ -127,9 +127,10 @@ exports.postCommentsByArticleId = (article_id, body, username) => {
     return db
         .query(
             `UPDATE comments
-                    SET body = $1 
-                    WHERE article_id = $2 AND author = $3 RETURNING *;`,
-            [body, article_id, username]
+                    SET body = $1,
+                     author = $2
+                    WHERE article_id = $3 RETURNING *;`,
+            [body, username, article_id]
         )
         .then(({ rows }) => {
             return rows[0];

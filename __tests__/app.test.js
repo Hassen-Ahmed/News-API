@@ -219,17 +219,17 @@ describe("All requests method and endpoints container", () => {
                     expect(msg).toBe("Not found!");
                 });
         });
-        test("404 should be respond when username from request body not exits in users table", () => {
+        test("400 should be respond when username from request body not exits in users table", () => {
             return request(app)
                 .post("/api/articles/9/comments")
-                .expect(404)
+                .expect(400)
                 .send({
                     username: "David",
                     body: "post request will going to be ok",
                 })
                 .then(({ body }) => {
                     const { msg } = body;
-                    expect(msg).toBe("Not found!");
+                    expect(msg).toBe("Invalid request!");
                 });
         });
 
