@@ -99,7 +99,7 @@ describe("All requests method and endpoints container", () => {
                 });
         });
     });
-    describe.only("GET /api/articles", () => {
+    describe("GET /api/articles", () => {
         test("200 should respond when passed correct path", () => {
             return request(app)
                 .get("/api/articles")
@@ -173,7 +173,7 @@ describe("All requests method and endpoints container", () => {
                 .expect(201)
                 .send({
                     username: "butter_bridge",
-                    body: "post request will going to be ok",
+                    body: "post request will going to be",
                 })
                 .then(({ body }) => {
                     const { comments } = body;

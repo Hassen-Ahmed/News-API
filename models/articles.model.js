@@ -123,13 +123,13 @@ exports.selectCommentsByArticleId = (article_id, limit = 10, p = 0) => {
     });
 };
 
-exports.postCommentsByArticleId = (article_id, body) => {
+exports.postCommentsByArticleId = (article_id, body, username) => {
     return db
         .query(
             `UPDATE comments
                     SET body = $1 
-                    WHERE article_id = $2 RETURNING *;`,
-            [body, article_id]
+                    WHERE article_id = $2 AND author = $3 RETURNING *;`,
+            [body, article_id, username]
         )
         .then(({ rows }) => {
             return rows[0];

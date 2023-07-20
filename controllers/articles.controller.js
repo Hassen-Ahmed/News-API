@@ -48,7 +48,7 @@ exports.postCommentById = (req, res, next) => {
     const { username, body } = req.body;
 
     const promises = [
-        postCommentsByArticleId(article_id, body),
+        postCommentsByArticleId(article_id, body, username),
         checkArticleExist(username, "users", "username"),
     ];
 
