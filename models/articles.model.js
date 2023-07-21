@@ -47,6 +47,7 @@ exports.selectAllArticles = async (
         "topic",
         "created_at",
         "votes",
+        "comments_count",
         "article_img_url",
     ];
     let query = `SELECT articles.author, title, articles.body,
